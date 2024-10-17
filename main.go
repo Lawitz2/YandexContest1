@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+/*
+программа по расшифровке логов
+*/
+
 type flight struct {
 	m      int
 	status string
@@ -28,6 +32,7 @@ type list struct {
 
 type lists []list
 
+// реализация сортировки
 func (a flights) Len() int           { return len(a) }
 func (a flights) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a flights) Less(i, j int) bool { return a[i].m < a[j].m }
@@ -61,15 +66,16 @@ func main() {
 		mins, _ := strconv.Atoi(dataslice[0])
 		mins2, _ := strconv.Atoi(dataslice[1])
 
-		mins = mins*60*24 + mins2*60 //go from day/hour/minute to minutes
+		// переходим от дни/часы/минуты к минутам
+		mins = mins*60*24 + mins2*60
 		mins2, _ = strconv.Atoi(dataslice[2])
 		mins += mins2
 
 		idx, _ := strconv.Atoi(dataslice[3])
 		r := logs[idx]
 
-		if r.f == nil {
-			r.f = make([]flight, 0, 128)
+		if r.f == nil { // если это первая запись для ракеты idx - создаем слайс
+			r.f = make([]flight, 0, 128) // в слайсе хранятся данные о полётах конкретной ракеты
 		}
 
 		var fl flight
@@ -81,6 +87,7 @@ func main() {
 
 	res := make(lists, 0, len(logs))
 
+	// подсчёт общего налёта каждый ракеты
 	for i, r := range logs {
 		sort.Sort(flights(r.f))
 		delta := 0
